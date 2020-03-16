@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { v4: uuidv4 } = require('uuid');
 const { seats } = require('../db/db');
 
 router.get('/', (req, res) => {
@@ -7,10 +8,16 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const { author, text } = req.body;
+  const { day, seat, client, email } = req.body;
   const id = uuidv4();
-  seats.push({ id, author, text });
-  res.json({ message: 'OK' });
+  const duplicates = seats.filter(i => i.seat == seat && i.day == day);
+
+  if (duplicates.length) {
+    res.status(404).json({ message: 'The slot is already taken...' });
+  } else {
+    seats.push({ id, day, seat, client, email });
+    res.json({ message: 'OK' });
+  }
 });
 
 router.get('/random', (req, res) => {
@@ -26,9 +33,9 @@ router.get('/:id', (req, res) => {
 
 router.put('/:id', (req, res) => {
   const { id } = req.params;
-  const { author, text } = req.body;
+  const { day, seat, client, email } = req.body;
 
-  seats = seats.map(i => (i.id == id ? { ...i, author, text } : i));
+  seats = seats.map(i => (i.id == id ? { ...i, day, seat, client, email } : i));
   res.json({ message: 'OK' });
 });
 

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { v4: uuidv4 } = require('uuid');
 const { concerts } = require('../db/db');
 
 router.get('/', (req, res) => {
@@ -7,9 +8,9 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const { author, text } = req.body;
+  const { performer, genre, price, day, image } = req.body;
   const id = uuidv4();
-  concerts.push({ id, author, text });
+  concerts.push({ id, performer, genre, price, day, image });
   res.json({ message: 'OK' });
 });
 
@@ -26,9 +27,11 @@ router.get('/:id', (req, res) => {
 
 router.put('/:id', (req, res) => {
   const { id } = req.params;
-  const { author, text } = req.body;
+  const { performer, genre, price, day, image } = req.body;
 
-  concerts = concerts.map(i => (i.id == id ? { ...i, author, text } : i));
+  concerts = concerts.map(i =>
+    i.id == id ? { ...i, performer, genre, price, day, image } : i,
+  );
   res.json({ message: 'OK' });
 });
 
