@@ -14,6 +14,19 @@ class OrderTicketForm extends React.Component {
       seat: '',
     },
     isError: false,
+    loadSeatsInterval: "",
+  }
+
+  
+
+  componentDidMount() {
+    const { loadSeats } = this.props;
+    const interval = setInterval(loadSeats, 1000*120);
+    this.setState({loadSeatsInterval: interval})
+  }
+
+  componentWillMount() {
+    clearInterval(this.state.loadSeatsInterval);
   }
 
   updateSeat = (e, seatId) => {
@@ -34,17 +47,20 @@ class OrderTicketForm extends React.Component {
     const { order } = this.state;
     const { value, name } = target;
 
-    this.setState({ order: { ...order, [name]: parseInt(value) }});
+    this.setState({ order: { ...order, [name]: parseInt(value), seat: "" }});
   }
 
   submitForm = async (e) => {
     const { order } = this.state;
-    const { addSeat } = this.props;
+    const { addSeat, loadSeats } = this.props;
 
     e.preventDefault();
 
-    if(order.client && order.email && order.day && order.seat) {
-      addSeat(order);
+    if(order.client && order.email && order.day && order.seat) {      
+      await addSeat(order);
+      await loadSeats();
+      console.log(order);
+      
       this.setState({ 
         order: {
           client: '',
@@ -64,6 +80,7 @@ class OrderTicketForm extends React.Component {
     const { updateSeat, updateTextField, updateNumberField, submitForm } = this;
     const { requests } = this.props;
     const { order, isError } = this.state;
+    
 
     return (
       <Form className="order-ticket-form" onSubmit={submitForm}>
