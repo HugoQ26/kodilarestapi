@@ -6,14 +6,15 @@ const testimonialsRoutes = require('./routes/testimonials.routes');
 const seatsRoutes = require('./routes/seats.routes');
 const concertsRoutes = require('./routes/concerts.routes');
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8000;
 
+app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-app.use('/seats', seatsRoutes);
-app.use('/concerts', concertsRoutes);
-app.use('/testimonials', testimonialsRoutes);
+app.use('/api/seats', seatsRoutes);
+app.use('/api/concerts', concertsRoutes);
+app.use('/api/testimonials', testimonialsRoutes);
 
 app.use((req, res) => {
   res.json({ message: 'Not found...' });
