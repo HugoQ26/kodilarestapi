@@ -1,6 +1,6 @@
 # Order a ticket for concert.
 
-#####Tech stack: Node.js, Express.js, Socket.io, React.js
+##### Tech stack: Node.js, Express.js, Socket.io, React.js
 
 #### My job was to make:
 
@@ -15,8 +15,13 @@ Deployed on [heroku.](https://concertsrest.herokuapp.com/ 'Book a ticket for a c
 First clone repo.
 
 Next in root folder:
+
 `npm run inst_dep` - this will install all dependiences , both client and server side.
+
 And then run:
+
 `npm run dev` - this will start Node server and React app concurrently.
+
 And in the browser:
+
 `http://localhost:3000/`
