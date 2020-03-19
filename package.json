@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "client": "cd client && npm start",
+    "inst_dep": "npm i && cd client && npm i",
     "server": "nodemon server.js",
     "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
     "build": "cd client && npm i && npm run build"
@@ -19,5 +20,8 @@
     "express": "^4.17.1",
     "socket.io": "^2.3.0",
     "uuid": "^7.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
   }
 }
