@@ -10,12 +10,17 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
   const { day, seat, client, email } = req.body;
   const id = uuidv4();
+  const io = req.io;
+
   const duplicates = seats.filter(i => i.seat == seat && i.day == day);
 
   if (duplicates.length) {
     res.status(404).json({ message: 'The slot is already taken...' });
   } else {
     seats.push({ id, day, seat, client, email });
+
+    io.emit('seatsUpdated', seats);
+
     res.json({ message: 'OK' });
   }
 });
