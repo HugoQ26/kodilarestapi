@@ -3,12 +3,18 @@ const app = express();
 var cors = require('cors');
 const path = require('path');
 const socket = require('socket.io');
+require('dotenv').config();
+const MongoClient = require('mongodb').MongoClient;
+const mongoose = require('mongoose');
 
 const testimonialsRoutes = require('./routes/testimonials.routes');
 const seatsRoutes = require('./routes/seats.routes');
 const concertsRoutes = require('./routes/concerts.routes');
 
 const PORT = process.env.PORT || 8000;
+const dbHostAtlas = process.env.DB_HOST_ATLAS;
+const dbHostLocal = process.env.DB_HOST_LOCAL;
+const dbHost = dbHostAtlas || dbHostLocal;
 
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
@@ -32,6 +38,17 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname + '/client/build/index.html'));
 });
 
+mongoose.connect(dbHost, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+const db = mongoose.connection;
+
+db.once('open', () => {
+  console.log('Connected to the database');
+});
+db.on('error', err => console.log('Error ' + err));
+
 const server = app.listen(PORT, () => {
   console.log(`Server is running on Port ${PORT}`);
 });
@@ -41,17 +58,7 @@ const io = socket(server);
 io.on('connection', socket => {
   console.log('New socket connected');
 
-  // socket.on('message', message => {
-  //   messages.push(message);
-  //   socket.broadcast.emit('message', message);
-  // });
-
   socket.on('disconnect', () => {
     console.log('Socekt disconected');
-
-    // socket.broadcast.emit('message', {
-    //   author: 'Chat Bot',
-    //   content: `${userName} has left the conversation... :(`,
-    // });
   });
 });
