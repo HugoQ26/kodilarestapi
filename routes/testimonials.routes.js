@@ -2,9 +2,15 @@ const express = require('express');
 const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const { testimonials } = require('../db/db');
+const Testimonials = require('../models/testimonials.model');
 
-router.get('/', (req, res) => {
-  res.json(testimonials);
+router.get('/', async (req, res) => {
+  try {
+    res.json(await Testimonials.find());
+  } catch (error) {
+    console.log(error);
+  }
+  // res.json(testimonials);
 });
 
 router.post('/', (req, res) => {
