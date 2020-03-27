@@ -11,6 +11,7 @@ exports.getAllSeats = async (req, res) => {
 };
 
 exports.postSeat = async (req, res) => {
+  const io = req.io;
   const { day, seat, client, email } = req.body;
   console.log(day, seat, client, email);
 
@@ -23,6 +24,8 @@ exports.postSeat = async (req, res) => {
     }
     const newTicket = new Seats({ client: clientId, seat, day });
     await newTicket.save();
+    const updatedSeats = await Seats.find().populate('client');
+    io.emit('seatsUpdated', updatedSeats);
     res.json({ message: 'OK', new: newTicket });
   } catch (err) {
     res.json(err);
