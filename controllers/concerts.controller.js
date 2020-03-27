@@ -1,13 +1,14 @@
 const Concerts = require('../models/concerts.model');
 const Performer = require('../models/performer.model');
 const Genre = require('../models/genre.model');
+const createItem = require('../utils/returnItemOrCreate');
 
 exports.getAllConcerts = async (req, res) => {
   try {
     res.json(
       await Concerts.find()
-        .populate('performer')
-        .populate('genre'),
+        .populate('performer', 'name')
+        .populate('genre', 'name'),
     );
   } catch (err) {
     res.status(500).json({ message: err });
@@ -17,24 +18,10 @@ exports.getAllConcerts = async (req, res) => {
 exports.postConcert = async (req, res) => {
   const { performer, genre, price, day, image } = req.body;
 
-  const idGenerator = async (Model, newValue) => {
-    try {
-      const item = await Model.findOne({ name: newValue });
-
-      if (item) {
-        return item._id;
-      }
-      const newItem = new Model({ name: newValue });
-      await newItem.save();
-      return newItem._id;
-    } catch (error) {
-      return new Error(error);
-    }
-  };
-
   try {
-    const performerId = await idGenerator(Performer, performer);
-    const genreId = await idGenerator(Genre, genre);
+    /* createItem checks if record exists if no it will create new and retirn id*/
+    const performerId = await createItem(Performer, performer);
+    const genreId = await createItem(Genre, genre);
     const newConcert = new Concerts({
       performer: performerId,
       genre: genreId,
