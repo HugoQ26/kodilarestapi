@@ -1,10 +1,10 @@
 # Order a ticket for concert.
 
-##### Tech stack: Node.js, Express.js, Socket.io, React.js
+##### Tech stack: Node.js, Express.js, Socket.io, React.js, MongoDb,
 
 #### My job was to make:
 
-1. a REST api for the frontend
+1. a REST api for the frontend with MongoDb
 2. use that api in the React's frontend and all the logic
 3. use in some cases socket.io
 
