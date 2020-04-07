@@ -8,7 +8,7 @@ const concertsSchema = new mongoose.Schema({
     ref: 'Performer',
     required: true,
   },
-  genre: { type: mongoose.Schema.Types.ObjectId, ref: 'Genre', required: true },
+  genre: { type: String, ref: 'Genre', required: true },
   price: { type: Number, required: true },
   day: { type: Number, required: true },
   image: { type: String, required: true },

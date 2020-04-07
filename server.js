@@ -47,7 +47,7 @@ const db = mongoose.connection;
 db.once('open', () => {
   console.log('Connected to the database');
 });
-db.on('error', err => console.log('Error ' + err));
+db.on('error', (err) => console.log('Error ' + err));
 
 const server = app.listen(PORT, () => {
   console.log(`Server is running on Port ${PORT}`);
@@ -55,10 +55,12 @@ const server = app.listen(PORT, () => {
 
 const io = socket(server);
 
-io.on('connection', socket => {
+io.on('connection', (socket) => {
   console.log('New socket connected');
 
   socket.on('disconnect', () => {
     console.log('Socekt disconected');
   });
 });
+
+module.exports = server;

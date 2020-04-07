@@ -100,3 +100,91 @@ exports.deleteConcert = async (req, res) => {
     res.status(500).json({ message: err });
   }
 };
+
+exports.getAllPerformerConcerts = async (req, res) => {
+  const { performer } = req.params;
+
+  try {
+    const perf = await Performer.findOne({ name: performer });
+    if (!perf) {
+      return res.status(404).json({ message: 'Performer not found' });
+    }
+    const performerId = perf._id;
+    const concerts = await Concerts.find({ performer: performerId })
+      .populate('genre')
+      .populate('performer');
+    if (!concerts.length)
+      return res.status(404).json({ message: 'Concerts not found' });
+    res.json(concerts);
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+};
+
+exports.getConcertsByGenre = async (req, res) => {
+  const { genre } = req.params;
+
+  try {
+    const gen = await Genre.findOne({ name: genre });
+    if (!gen) {
+      return res.status(404).json({ message: 'Genre not found' });
+    }
+
+    const genreId = gen._id;
+    const concerts = await Concerts.find({
+      genre: genreId,
+    })
+      .populate('genre')
+      .populate('performer');
+
+    if (!concerts.length) {
+      return res
+        .status(404)
+        .json({ message: 'No concerts found with selected genre' });
+    }
+    res.json(concerts);
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+};
+
+exports.getConcertsByPriceRange = async (req, res) => {
+  const { price_min, price_max } = req.params;
+  console.log(price_min, price_max);
+
+  try {
+    const concerts = await Concerts.find()
+      .where('price')
+      .gte(price_min)
+      .lte(price_max)
+      .populate('genre')
+      .populate('performer');
+    if (!concerts.length) {
+      return res.status(404).json({
+        message: 'No concerts found with selected price range',
+      });
+    }
+
+    res.json(concerts);
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+};
+
+exports.getConcertsByDay = async (req, res) => {
+  const { day } = req.params;
+
+  try {
+    const concerts = await Concerts.find({ day })
+      .populate('genre')
+      .populate('performer');
+    if (!concerts.length) {
+      return res.status(404).json({
+        message: 'No concerts found with selected day',
+      });
+    }
+    res.json(concerts);
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+};
