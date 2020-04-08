@@ -2,6 +2,7 @@ const Concerts = require('../models/concerts.model');
 const Performer = require('../models/performer.model');
 const Genre = require('../models/genre.model');
 const createItem = require('../utils/returnItemOrCreate');
+const sanitize = require('mongo-sanitize');
 
 exports.getAllConcerts = async (req, res) => {
   try {
@@ -104,8 +105,10 @@ exports.deleteConcert = async (req, res) => {
 exports.getAllPerformerConcerts = async (req, res) => {
   const { performer } = req.params;
 
+  const cleanPerformer = sanitize(performer);
+
   try {
-    const perf = await Performer.findOne({ name: performer });
+    const perf = await Performer.findOne({ name: { $eq: cleanPerformer } });
     if (!perf) {
       return res.status(404).json({ message: 'Performer not found' });
     }
@@ -123,9 +126,10 @@ exports.getAllPerformerConcerts = async (req, res) => {
 
 exports.getConcertsByGenre = async (req, res) => {
   const { genre } = req.params;
+  const cleanGenre = sanitize(genre);
 
   try {
-    const gen = await Genre.findOne({ name: genre });
+    const gen = await Genre.findOne({ name: { $eq: genre } });
     if (!gen) {
       return res.status(404).json({ message: 'Genre not found' });
     }
@@ -150,7 +154,6 @@ exports.getConcertsByGenre = async (req, res) => {
 
 exports.getConcertsByPriceRange = async (req, res) => {
   const { price_min, price_max } = req.params;
-  console.log(price_min, price_max);
 
   try {
     const concerts = await Concerts.find()
@@ -174,8 +177,10 @@ exports.getConcertsByPriceRange = async (req, res) => {
 exports.getConcertsByDay = async (req, res) => {
   const { day } = req.params;
 
+  const cleanDay = sanitize(day);
+
   try {
-    const concerts = await Concerts.find({ day })
+    const concerts = await Concerts.find({ day: { $eq: cleanDay } })
       .populate('genre')
       .populate('performer');
     if (!concerts.length) {

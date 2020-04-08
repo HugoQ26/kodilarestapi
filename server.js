@@ -3,6 +3,7 @@ const app = express();
 var cors = require('cors');
 const path = require('path');
 const socket = require('socket.io');
+const helmet = require('helmet');
 require('dotenv').config();
 const MongoClient = require('mongodb').MongoClient;
 const mongoose = require('mongoose');
@@ -16,7 +17,12 @@ const dbHostAtlas = process.env.DB_HOST_ATLAS;
 const dbHostLocal = process.env.DB_HOST_LOCAL;
 const dbHost = dbHostAtlas || dbHostLocal;
 
-app.use(cors());
+app.use(helmet());
+app.use(
+  cors({
+    origin: 'https://concertsrest.herokuapp.com/' || 'http://localhost:3000',
+  }),
+);
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '/client/build')));
@@ -47,7 +53,13 @@ const db = mongoose.connection;
 db.once('open', () => {
   console.log('Connected to the database');
 });
-db.on('error', (err) => console.log('Error ' + err));
+db.on('error', (err) => {
+  if (process.env.NODE_ENV === 'production') {
+    console.log('Database error');
+  } else {
+    console.log(err);
+  }
+});
 
 const server = app.listen(PORT, () => {
   console.log(`Server is running on Port ${PORT}`);

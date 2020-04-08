@@ -9,9 +9,13 @@ const concertsSchema = new mongoose.Schema({
     required: true,
   },
   genre: { type: String, ref: 'Genre', required: true },
-  price: { type: Number, required: true },
-  day: { type: Number, required: true },
-  image: { type: String, required: true },
+  price: {
+    type: Number,
+    required: true,
+    min: [1, 'We arent non profit company'],
+  },
+  day: { type: Number, required: true, min: 1 },
+  image: { type: String, required: true, minlength: 4 },
 });
 
 module.exports = mongoose.model('Concerts', concertsSchema);
