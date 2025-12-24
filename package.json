@@ -29,7 +29,7 @@
     "mongodb": "^3.5.5",
     "mongoose": "^5.9.6",
     "onchange": "^6.1.0",
-    "socket.io": "^2.3.0",
+    "socket.io": "^3.0.0",
     "uuid": "^7.0.2"
   },
   "devDependencies": {
